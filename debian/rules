@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+
+BOOT_PATH=`pwd`/debian/tmp/boot
+TOOL_PATH=`pwd`/debian/tmp/usr/bin
+
+BUILD_DIR=`pwd`/debian/build
+
+MAKE_OPTS= ARCH=arm CROSS_COMPILE= KERNELRELEASE=2021.01-u-boot O=$(BUILD_DIR) DEVICE_TREE=stm32mp157a-dk1
+
+#export DH_VERBOSE=1
+export LDFLAGS=
+
+override_dh_auto_test:
+	# skip tests.
+
+override_dh_auto_clean:
+	mkdir -p $(BUILD_DIR)
+	rm -f debian/files
+	rm -rf debian/tmp
+	make $(MAKE_OPTS) clean
+
+override_dh_auto_configure:
+	mkdir -p $(BUILD_DIR)
+	make $(MAKE_OPTS) stm32mp15_lr_basic_defconfig
+
+override_dh_auto_build:
+	make -j`nproc` $(MAKE_OPTS)
+	make -j`nproc` $(MAKE_OPTS) envtools
+	make -j`nproc` $(MAKE_OPTS) CROSS_BUILD_TOOLS=y tools-only
+
+override_dh_auto_install:
+	mkdir -p $(TOOL_PATH) $(BOOT_PATH)
+	cp $(BUILD_DIR)/u-boot-dtb.img $(BOOT_PATH)
+	cp $(BUILD_DIR)/spl/u-boot-spl.stm32 $(BOOT_PATH)
+	-cp $(BUILD_DIR)/tools/dumpimage $(TOOL_PATH)
+	-cp $(BUILD_DIR)/tools/mkenvimage $(TOOL_PATH)
+	-cp $(BUILD_DIR)/tools/mkimage $(TOOL_PATH)
+	-cp $(BUILD_DIR)/tools/env/fw_printenv $(TOOL_PATH)
+
+%:
+	dh $@
