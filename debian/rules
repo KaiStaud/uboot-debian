@@ -2,5 +2,8 @@
 #export DH_VERBOSE=1
 export LDFLAGS=
 
+override_dh_auto_clean:
+	git config --global --add safe.directory $(PWD)
+
 %:
 	dh $@
