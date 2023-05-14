@@ -14,10 +14,3 @@ Description: A boot loader for embedded systems
  vendors.  It is intended to be easy to port and to debug, and runs on many supported architectures, including PPC,
  ARM, MIPS, x86, m68k, NIOS, and Microblaze.
 
-Package: u-boot-tools-u-boot-2021.01
-Provides: u-boot-tools
-Architecture: armhf
-Description: companion tools for Das U-Boot bootloader
- This package includes the mkimage program, which allows generation of U-Boot
- images in various formats, and the fw_printenv and fw_setenv programs to read
- and modify U-Boot's environment.
